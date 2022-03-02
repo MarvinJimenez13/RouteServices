@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "672622522497",
+    "firebase_url": "https://cloneuber-336416-default-rtdb.firebaseio.com",
+    "project_id": "cloneuber-336416",
+    "storage_bucket": "cloneuber-336416.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672622522497:android:695530303dd37133279d80",
+        "android_client_info": {
+          "package_name": "com.udemy.cloneuber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672622522497-n3a0m98g2gm9603f0q3c837ob2rdmq7i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZObOmRm3d4m11OHIZ1n6f6lelfw27ZRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672622522497-n3a0m98g2gm9603f0q3c837ob2rdmq7i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

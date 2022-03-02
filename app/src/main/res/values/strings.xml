@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">UberClone</string>
+    <string name="uber_clone">Unlimited Confort</string>
+    <string name="option_auth">Selecciona una opción</string>
+    <string name="register">Registrate</string>
+    <string name="btn_registro">Registrarme</string>
+    <string name="login">Iniciar Sesion</string>
+    <string name="btn_login">Entrar</string>
+    <string name="hint_correo">Correo Electronico</string>
+    <string name="hint_password">Contrasena</string>
+    <string name="hint_nombre">Nombre Completo</string>
+    <string name="tengo_cuenta">Ya tengo cuenta</string>
+    <string name="registrarme_now">Registrarme ahora</string>
+    <string name="hint_placa">Placa del vehiculo</string>
+    <string name="hint_marca">Marca del vehiculo</string>
+    <string name="conectarse">Conectarse</string>
+    <string name="solicitar_viaje">Solicitar Viaje</string>
+    <string name="cancelar_viaje">Cancelar Viaje</string>
+</resources>
