@@ -15,4 +15,6 @@ public interface MapDriverInteractor {
 
     void removeEventListener(AuthProvider authProvider);
 
+    void deleteDriverWorking(AuthProvider authProvider, boolean connect);
+
 }

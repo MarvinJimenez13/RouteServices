@@ -48,4 +48,15 @@ public class MapDriverPresenterImpl implements MapDriverPresenter {
             mapDriverView.disconnect();
     }
 
+    @Override
+    public void deleteDriverWorking(AuthProvider authProvider, boolean connect) {
+        mapDriverInteractor.deleteDriverWorking(authProvider, connect);
+    }
+
+    @Override
+    public void startLocation() {
+        if(mapDriverView != null)
+            mapDriverView.startLocation();
+    }
+
 }

@@ -159,6 +159,11 @@ public class MapDriverBookingActivity extends AppCompatActivity implements OnMap
     }
 
     @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.SETTINGS_REQUEST_CODE && PermissionsProvider.gpsActived(this)) {

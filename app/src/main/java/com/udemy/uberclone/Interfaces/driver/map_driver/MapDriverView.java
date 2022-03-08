@@ -4,4 +4,6 @@ public interface MapDriverView {
 
     void disconnect();
 
+    void startLocation();
+
 }

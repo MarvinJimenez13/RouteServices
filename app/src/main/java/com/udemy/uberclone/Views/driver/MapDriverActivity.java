@@ -47,7 +47,7 @@ import butterknife.Unbinder;
 
 public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCallback, MapDriverView {
 
-    private boolean isConnect = false;
+    private boolean isConnect = false, mExtraConnect;
     private GoogleMap map;
     private Marker marker;
     private LocationRequest locationRequest;
@@ -102,11 +102,15 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
         authProvider = new AuthProvider();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mapDriverPresenter.generateTokenNoti(authProvider);
-        //METODO PAARA SABER SI EL DRIVER ESTA TRABAJANDO Y QUITARLO DE ACTIVE DRIVERS
-        mapDriverPresenter.isDriverWorking(authProvider);
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapDriver);
         supportMapFragment.getMapAsync(this);
+
+        /*
+        Eliminamos la referencia de conductores trabajando para evitar problemas,
+        esto nos mantiene conectados y en workings
+         */
+        mapDriverPresenter.deleteDriverWorking(authProvider, getIntent().getBooleanExtra("CONNECT", false));
     }
 
     @Override
@@ -154,6 +158,9 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
             return;
         }
         map.setMyLocationEnabled(false);
+
+        //METODO PAARA SABER SI EL DRIVER ESTA TRABAJANDO Y QUITARLO DE ACTIVE DRIVERS DESPUES DE QUE EL MAPA CARGO
+        mapDriverPresenter.isDriverWorking(authProvider);
     }
 
     @Override
@@ -187,7 +194,8 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
         mapDriverPresenter.removeEventListener(authProvider);
     }
 
-    private void startLocation() {
+    @Override
+    public void startLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 if (PermissionsProvider.gpsActived(this)){

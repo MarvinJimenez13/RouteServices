@@ -4,6 +4,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -39,9 +40,14 @@ public class GeofireProvider {
         else return null;
     }
 
-    //METODO PAARA SABER SI EL DRIVER ESTA TRABAJANDO Y QUITARLO DE ACTIVE DRIVERS
+    //METODO PARA SABER SI EL DRIVER ESTA TRABAJANDO Y QUITARLO DE ACTIVE DRIVERS
     public DatabaseReference isDriverWorking(String idDriver){
         return FirebaseDatabase.getInstance().getReference().child("drivers_working").child(idDriver);
+    }
+
+    //METODO PARA ELIMINAR LA REFERENCIA
+    public Task<Void> deleteDriverWorking(String idDriver){
+        return FirebaseDatabase.getInstance().getReference().child("drivers_working").child(idDriver).removeValue();
     }
 
 }

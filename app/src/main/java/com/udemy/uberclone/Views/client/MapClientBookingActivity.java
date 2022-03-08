@@ -68,6 +68,11 @@ public class MapClientBookingActivity extends AppCompatActivity implements OnMap
     }
 
     @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
+
+    @Override
     public void finishBooking(){
         startActivity(new Intent(this, CalificationDriverActivity.class));
         finish();

@@ -62,4 +62,15 @@ public class MapDriverInteractorImpl implements MapDriverInteractor {
             geofireProvider.isDriverWorking(authProvider.getID()).removeEventListener(valueEventListener);
     }
 
+    @Override
+    public void deleteDriverWorking(AuthProvider authProvider, boolean connect) {
+        geofireProvider.deleteDriverWorking(authProvider.getID()).addOnSuccessListener(listener ->{
+            isDriverWorking(authProvider);
+
+            //VALIDAMOS SI VENIMOS DE CALIFICATIONCLIENTACTIVITY PARA VOLVER A CONECTARNOS
+            if(connect)
+                mapDriverPresenter.startLocation();
+        });
+    }
+
 }

@@ -124,7 +124,10 @@ public class RequestDriverActivity extends AppCompatActivity implements RequestD
 
     @Override
     public void toMapClientBooking() {
-        startActivity(new Intent(RequestDriverActivity.this, MapClientBookingActivity.class));
+        Intent intent = new Intent(new Intent(RequestDriverActivity.this, MapClientBookingActivity.class));
+        //Borramos el historial de actividades anterior
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         finish();
     }
 

@@ -17,4 +17,8 @@ public interface MapDriverPresenter {
 
     void disconnect();
 
+    void deleteDriverWorking(AuthProvider authProvider, boolean connect);
+
+    void startLocation();
+
 }

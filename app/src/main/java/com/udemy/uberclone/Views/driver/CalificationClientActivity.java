@@ -70,7 +70,9 @@ public class CalificationClientActivity extends AppCompatActivity implements Cal
     @Override
     public void calificationSuccess() {
         Toast.makeText(getApplicationContext(), "Cliente calificado!", Toast.LENGTH_LONG).show();
-        startActivity(new Intent(getApplicationContext(), MapDriverActivity.class));
+        Intent intent = new Intent(getApplicationContext(), MapDriverActivity.class);
+        intent.putExtra("CONNECT", true);
+        startActivity(intent);
         finish();
     }
 
