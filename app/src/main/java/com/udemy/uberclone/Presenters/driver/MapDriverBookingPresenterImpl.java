@@ -70,8 +70,8 @@ public class MapDriverBookingPresenterImpl implements MapDriverBookingPresenter 
     }
 
     @Override
-    public void finalizarViaje(String idClientBooking, AuthProvider authProvider) {
-        mapDriverBookingInteractor.finalizarViaje(idClientBooking, authProvider);
+    public void finalizarViaje(String idClientBooking, AuthProvider authProvider, Context context) {
+        mapDriverBookingInteractor.finalizarViaje(idClientBooking, authProvider, context);
     }
 
     @Override

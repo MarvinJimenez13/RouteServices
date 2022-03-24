@@ -5,16 +5,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,11 +41,14 @@ import com.udemy.uberclone.Interfaces.driver.map_driver.MapDriverPresenter;
 import com.udemy.uberclone.Interfaces.driver.map_driver.MapDriverView;
 import com.udemy.uberclone.Presenters.driver.MapDriverPresenterImpl;
 import com.udemy.uberclone.R;
+import com.udemy.uberclone.Utils.CarMoveAnim;
 import com.udemy.uberclone.Utils.includes.MyToolbar;
+import com.udemy.uberclone.Utils.preferences.SharedPreferencesUber;
 import com.udemy.uberclone.Utils.providers.AuthProvider;
 import com.udemy.uberclone.Utils.providers.PermissionsProvider;
 import com.udemy.uberclone.Views.MainActivity;
 import com.udemy.uberclone.Utils.Constants;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -47,7 +56,7 @@ import butterknife.Unbinder;
 
 public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCallback, MapDriverView {
 
-    private boolean isConnect = false, mExtraConnect;
+    private boolean isConnect = false;
     private GoogleMap map;
     private Marker marker;
     private LocationRequest locationRequest;
@@ -57,34 +66,59 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
     private Unbinder mUnbinder;
     private AuthProvider authProvider;
     private MapDriverPresenter mapDriverPresenter;
+    private boolean mIsStartLocation = false;
+    private LatLng mStartLatLng, mEndLatLng;
+    private LocationManager locationManager;
 
     @BindView(R.id.toolbar)
     MaterialToolbar toolbar;
     @BindView(R.id.btnConectarse)
     MaterialButton btnConectarse;
 
+    //ANIMACION DE ICONO UBER
+    private LocationListener locationListenerGPS = location -> {
+        currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+        if (mStartLatLng != null)
+            mEndLatLng = mStartLatLng;
+
+        mStartLatLng = new LatLng(currentLatLng.latitude, currentLatLng.longitude);
+
+        if (mEndLatLng != null)
+            CarMoveAnim.carAnim(marker, mEndLatLng, mStartLatLng);
+
+        updateLocation();
+    };
+
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             for (Location location : locationResult.getLocations()) {
                 if (getApplicationContext() != null) {
+                    if (!mIsStartLocation) {//SIGNIFICA QUE YA RECONOCIO LA UBICACION POR PRIMERA VEZ
+                        mIsStartLocation = true;
 
-                    currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-                    if(marker != null)
-                        marker.remove();
-                    marker = map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
-                            .title("Ubicacion actual")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon_vehicle)));
-                    //OBTENER LOCALIZACION DEL USUARIO EN TIEMPO REAL
-                    map.moveCamera(CameraUpdateFactory.newCameraPosition(
-                            new CameraPosition.Builder()
-                                    .target(new LatLng(location.getLatitude(), location.getLongitude()))
-                                    .zoom(15f)
-                                    .build()
-                    ));
+                        marker = map.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
+                                .title("Ubicacion actual")
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.uber_car)));
+                        //mueve la camara al centro del icono
+                        map.moveCamera(CameraUpdateFactory.newCameraPosition(
+                                new CameraPosition.Builder()
+                                        .target(new LatLng(location.getLatitude(), location.getLongitude()))
+                                        .zoom(18f)
+                                        .build()
+                        ));
 
-                    updateLocation();
+                        //DETENEMOS SERVICIO
+                        updateLocation();
+                        if (ActivityCompat.checkSelfPermission(MapDriverActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapDriverActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListenerGPS);//ESTO INICIALIZA EL ESCUCHADOR DE GPS EN TIEMPO REAL.
+                        stopLocation();
+                    }
                 }
             }
         }
@@ -101,16 +135,34 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
 
         authProvider = new AuthProvider();
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        mapDriverPresenter.generateTokenNoti(authProvider);
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapDriver);
         supportMapFragment.getMapAsync(this);
 
-        /*
-        Eliminamos la referencia de conductores trabajando para evitar problemas,
-        esto nos mantiene conectados y en workings
-         */
-        mapDriverPresenter.deleteDriverWorking(authProvider, getIntent().getBooleanExtra("CONNECT", false));
+        //INICIAMOS EL SHARED DEL VIAJE CONSULTANDO EL RIDE
+
+        String status = SharedPreferencesUber.getInstance(MapDriverActivity.this).getStatusDriverBooking();
+        String idClientBooking = SharedPreferencesUber.getInstance(MapDriverActivity.this).getIDClientBookingDriver();
+        Log.d("TAGSHARED", status);
+        if(status.equals("START") || status.equals("RIDE"))
+            goToMapDriverBooking(idClientBooking);
+        else{
+            mapDriverPresenter.generateTokenNoti(authProvider);
+            /*
+            Eliminamos la referencia de conductores trabajando para evitar problemas,
+            esto nos mantiene conectados y en workings
+             */
+            mapDriverPresenter.deleteDriverWorking(authProvider, getIntent().getBooleanExtra("CONNECT", false));
+        }
+    }
+
+    private void goToMapDriverBooking(String idClientBooking){
+        Intent intent = new Intent(MapDriverActivity.this, MapDriverBookingActivity.class);
+        intent.putExtra("idClient", idClientBooking);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -184,17 +236,6 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mUnbinder.unbind();
-        if(locationCallback != null && fusedLocationProviderClient != null){
-            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        }
-
-        mapDriverPresenter.removeEventListener(authProvider);
-    }
-
-    @Override
     public void startLocation() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -236,6 +277,21 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
     private void updateLocation(){
         if(authProvider.existSession() && currentLatLng != null)
             mapDriverPresenter.saveLocation(authProvider, currentLatLng);
+    }
+
+    private void stopLocation(){
+        if(locationCallback != null && fusedLocationProviderClient != null){
+            fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUnbinder.unbind();
+        stopLocation();
+
+        mapDriverPresenter.removeEventListener(authProvider);
     }
 
 }

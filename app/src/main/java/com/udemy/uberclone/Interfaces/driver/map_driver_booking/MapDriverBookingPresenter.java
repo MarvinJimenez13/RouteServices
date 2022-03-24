@@ -25,7 +25,7 @@ public interface MapDriverBookingPresenter {
 
     void setInfoInicioViaje(LatLng destinationLatLng);
 
-    void finalizarViaje(String idClientBooking, AuthProvider authProvider);
+    void finalizarViaje(String idClientBooking, AuthProvider authProvider, Context context);
 
     void toCalificationActivity();
 

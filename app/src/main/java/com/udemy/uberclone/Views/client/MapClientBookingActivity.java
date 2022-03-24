@@ -18,6 +18,7 @@ import com.udemy.uberclone.Interfaces.client.map_client_booking.MapClientBooking
 import com.udemy.uberclone.Interfaces.client.map_client_booking.MapClientBookingView;
 import com.udemy.uberclone.Presenters.client.MapClientBookingPresenterImpl;
 import com.udemy.uberclone.R;
+import com.udemy.uberclone.Utils.preferences.SharedPreferencesUber;
 import com.udemy.uberclone.Utils.providers.AuthProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,11 +58,14 @@ public class MapClientBookingActivity extends AppCompatActivity implements OnMap
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapClientBooking);
         supportMapFragment.getMapAsync(this);
 
+        idDriver = getIntent().getStringExtra("idDriver");
+
         mapClientBookingPresenter.getClientBooking(authProvider);
     }
 
     @Override
     public void startBooking(){
+        SharedPreferencesUber.getInstance(MapClientBookingActivity.this).guardarStatusClientBooking("START", idDriver);
         map.clear();
         map.addMarker(new MarkerOptions().position(destinationLatLng).title("Destino").icon(BitmapDescriptorFactory.fromResource(R.drawable.pinmorado)));
         mapClientBookingPresenter.drawRoute(driverLatLng, destinationLatLng, MapClientBookingActivity.this);
@@ -74,6 +78,7 @@ public class MapClientBookingActivity extends AppCompatActivity implements OnMap
 
     @Override
     public void finishBooking(){
+        SharedPreferencesUber.getInstance(MapClientBookingActivity.this).guardarStatusClientBooking(null,null);
         startActivity(new Intent(this, CalificationDriverActivity.class));
         finish();
     }
@@ -126,8 +131,15 @@ public class MapClientBookingActivity extends AppCompatActivity implements OnMap
                             .build()
             ));
 
-            mapClientBookingPresenter.drawRoute(driverLatLng, originLatLng, MapClientBookingActivity.this);
-            mapClientBookingPresenter.getStatusBooking(authProvider);
+            String status = SharedPreferencesUber.getInstance(MapClientBookingActivity.this).getStatusClientBooking();
+            if(status.equals("START"))
+                mapClientBookingPresenter.startBooking();
+            else{
+                mapClientBookingPresenter.drawRoute(driverLatLng, originLatLng, MapClientBookingActivity.this);
+                SharedPreferencesUber.getInstance(MapClientBookingActivity.this).guardarStatusClientBooking("RIDE", idDriver);
+            }
+
+                mapClientBookingPresenter.getStatusBooking(authProvider, MapClientBookingActivity.this);
         }
     }
 

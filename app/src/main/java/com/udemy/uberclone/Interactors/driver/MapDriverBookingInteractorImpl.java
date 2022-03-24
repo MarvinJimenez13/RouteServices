@@ -17,6 +17,7 @@ import com.udemy.uberclone.Interfaces.driver.map_driver_booking.MapDriverBooking
 import com.udemy.uberclone.Models.FCMBody;
 import com.udemy.uberclone.Models.FCMResponse;
 import com.udemy.uberclone.R;
+import com.udemy.uberclone.Utils.preferences.SharedPreferencesUber;
 import com.udemy.uberclone.Utils.providers.AuthProvider;
 import com.udemy.uberclone.Utils.providers.ClientBookingProvider;
 import com.udemy.uberclone.Utils.providers.ClientProvider;
@@ -92,10 +93,19 @@ public class MapDriverBookingInteractorImpl implements MapDriverBookingInteracto
                     double destinationLng = Double.parseDouble(snapshot.child("destinationLng").getValue().toString());
                     originLatLng = new LatLng(originLat, originLng);
                     destinationLatLng = new LatLng(destinationLat, destinationLng);
-                    //RUTA ENTRE UBICACION ACTUAL DEL CONDUCTOR Y LA UBICACION DEL CLIENTE.
-                    drawRoute(currentLatLng, new LatLng(originLat, originLng), context);
 
-                    mapDriverBookingPresenter.setRouteInfo(origin, destination, originLat, originLng);
+                    //OBTENER EL ULTIMO ESTADO ALMACENADO EN SHAREDPREF
+                    if(SharedPreferencesUber.getInstance(context).getStatusDriverBooking() != null){
+                        if(SharedPreferencesUber.getInstance(context).getStatusDriverBooking().equals("START"))
+                            iniciarViaje(currentLatLng, idClientBooking, context);
+                        else{
+                            //ESTE VALOR SE ALMACENA CUANDO EL CONDUCTOR INICIA EL VIAJE POR PRIMERA VEZ
+                            SharedPreferencesUber.getInstance(context).guardarStatusDriverBooking("RIDE", idClientBooking);
+                            //RUTA ENTRE UBICACION ACTUAL DEL CONDUCTOR Y LA UBICACION DEL CLIENTE.
+                            drawRoute(currentLatLng, new LatLng(originLat, originLng), context);
+                            mapDriverBookingPresenter.setRouteInfo(origin, destination, originLat, originLng);
+                        }
+                    }
                 }
             }
 
@@ -124,6 +134,7 @@ public class MapDriverBookingInteractorImpl implements MapDriverBookingInteracto
     @Override
     public void iniciarViaje(LatLng currentLatLng, String idClientBooking, Context context) {
         if(isCloseToClient){
+            SharedPreferencesUber.getInstance(context).guardarStatusDriverBooking("START", idClientBooking);
             clientBookingProvider.updateStatus(idClientBooking, "START");
             mapDriverBookingPresenter.setInfoInicioViaje(destinationLatLng);
             drawRoute(currentLatLng, destinationLatLng, context);
@@ -133,9 +144,10 @@ public class MapDriverBookingInteractorImpl implements MapDriverBookingInteracto
     }
 
     @Override
-    public void finalizarViaje(String idClientBooking, AuthProvider authProvider) {
+    public void finalizarViaje(String idClientBooking, AuthProvider authProvider, Context context) {
         clientBookingProvider.updateStatus(idClientBooking, "FINISH");
         clientBookingProvider.updateIDHistoryBooking(idClientBooking);
+        SharedPreferencesUber.getInstance(context).guardarStatusDriverBooking("", "");
         sendNotification("Viaje Finalizado", idClientBooking);
         geofireProvider.removeLocation(authProvider.getID());
         mapDriverBookingPresenter.toCalificationActivity();

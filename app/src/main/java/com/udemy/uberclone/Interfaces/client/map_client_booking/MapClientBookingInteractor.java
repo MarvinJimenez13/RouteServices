@@ -8,7 +8,7 @@ public interface MapClientBookingInteractor {
 
     void getClientBooking(AuthProvider authProvider);
 
-    void getStatusBooking(AuthProvider authProvider);
+    void getStatusBooking(AuthProvider authProvider, Context context);
 
     void removeListeners(String idDriver, AuthProvider authProvider);
 

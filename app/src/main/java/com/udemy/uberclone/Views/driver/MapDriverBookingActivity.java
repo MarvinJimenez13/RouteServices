@@ -182,7 +182,7 @@ public class MapDriverBookingActivity extends AppCompatActivity implements OnMap
                 mapDriverBookingPresenter.iniciarViaje(currentLatLng, idClientBooking, MapDriverBookingActivity.this);
                 break;
             case R.id.btnFinalizarViaje:
-                mapDriverBookingPresenter.finalizarViaje(idClientBooking, authProvider);
+                mapDriverBookingPresenter.finalizarViaje(idClientBooking, authProvider, MapDriverBookingActivity.this);
                 break;
         }
     }

@@ -1,6 +1,7 @@
 package com.udemy.uberclone.Interactors.client;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.udemy.uberclone.Interfaces.client.map_client_booking.MapClientBookingInteractor;
 import com.udemy.uberclone.Interfaces.client.map_client_booking.MapClientBookingPresenter;
 import com.udemy.uberclone.R;
+import com.udemy.uberclone.Utils.preferences.SharedPreferencesUber;
 import com.udemy.uberclone.Utils.providers.AuthProvider;
 import com.udemy.uberclone.Utils.providers.ClientBookingProvider;
 import com.udemy.uberclone.Utils.providers.DriverProvider;
@@ -96,14 +98,16 @@ public class MapClientBookingInteractorImpl implements MapClientBookingInteracto
     }
 
     @Override
-    public void getStatusBooking(AuthProvider authProvider){
+    public void getStatusBooking(AuthProvider authProvider, Context context){
         valueStatusBooking = clientBookingProvider.getStatus(authProvider.getID()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    if(snapshot.getValue().toString().equals("START"))
-                        mapClientBookingPresenter.startBooking();
-                    else if(snapshot.getValue().toString().equals("FINISH"))
+                    if(snapshot.getValue().toString().equals("START")){
+                        String status = SharedPreferencesUber.getInstance(context).getStatusClientBooking();
+                        if(!status.equals("START"))
+                            mapClientBookingPresenter.startBooking();
+                    }else if(snapshot.getValue().toString().equals("FINISH"))
                         mapClientBookingPresenter.finishBooking();
                 }
             }

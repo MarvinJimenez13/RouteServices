@@ -44,6 +44,7 @@ import com.udemy.uberclone.Interfaces.client.map_client.MapClientView;
 import com.udemy.uberclone.Presenters.client.MapClientPresenterImpl;
 import com.udemy.uberclone.R;
 import com.udemy.uberclone.Utils.includes.MyToolbar;
+import com.udemy.uberclone.Utils.preferences.SharedPreferencesUber;
 import com.udemy.uberclone.Utils.providers.AuthProvider;
 import com.udemy.uberclone.Utils.providers.PermissionsProvider;
 import com.udemy.uberclone.Utils.providers.TokenNotiProvider;
@@ -123,12 +124,26 @@ public class MapClientActivity extends AppCompatActivity implements OnMapReadyCa
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         inicializarAutoComplete();
-        generateTokenNoti();
 
-        mapClientPresenter.onCameraListener(this, map);
+        //SharedPref para recuperar el viaje
+        String status = SharedPreferencesUber.getInstance(MapClientActivity.this).getStatusClientBooking();
+        String idDriver = SharedPreferencesUber.getInstance(MapClientActivity.this).getIDDriverBookingClient();
+        if(status.equals("RIDE") || status.equals("START"))
+            goToMapClientBookingActivity(idDriver);
+        else {
+            generateTokenNoti();
+            mapClientPresenter.onCameraListener(this, map);
+        }
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapClient);
         supportMapFragment.getMapAsync(this);
+    }
+
+    private void goToMapClientBookingActivity(String idDriver){
+        Intent intent = new Intent(MapClientActivity.this, MapClientBookingActivity.class);
+        intent.putExtra("idDriver", idDriver);
+        startActivity(intent);
+        finish();
     }
 
     @Override

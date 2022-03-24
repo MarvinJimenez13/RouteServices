@@ -15,7 +15,7 @@ public interface MapClientBookingPresenter {
 
     void setDriverLocation(double lat, double lng);
 
-    void getStatusBooking(AuthProvider authProvider);
+    void getStatusBooking(AuthProvider authProvider, Context context);
 
     void startBooking();
 

@@ -14,6 +14,6 @@ public interface MapDriverBookingInteractor {
 
     void iniciarViaje(LatLng currentLatLng, String idClientBooking, Context context);
 
-    void finalizarViaje(String idClientBooking, AuthProvider authProvider);
+    void finalizarViaje(String idClientBooking, AuthProvider authProvider, Context context);
 
 }

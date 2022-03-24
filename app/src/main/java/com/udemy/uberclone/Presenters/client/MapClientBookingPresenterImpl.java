@@ -43,8 +43,8 @@ public class MapClientBookingPresenterImpl implements MapClientBookingPresenter 
     }
 
     @Override
-    public void getStatusBooking(AuthProvider authProvider) {
-        mapClientBookingInteractor.getStatusBooking(authProvider);
+    public void getStatusBooking(AuthProvider authProvider, Context context) {
+        mapClientBookingInteractor.getStatusBooking(authProvider, context);
     }
 
     @Override
