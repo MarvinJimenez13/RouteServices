@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.CloneUber" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.RouteServices" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
@@ -14,7 +14,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="SplashTheme" parent="Theme.CloneUber">
+    <style name="SplashTheme" parent="Theme.RouteServices">
         <item name="android:windowBackground">
             @drawable/splash_screen
         </item>

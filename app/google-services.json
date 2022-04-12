@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:672622522497:android:695530303dd37133279d80",
+        "mobilesdk_app_id": "1:672622522497:android:22897237f027b3c7279d80",
         "android_client_info": {
-          "package_name": "com.udemy.cloneuber"
+          "package_name": "com.udemy.routeservices"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "672622522497-l7ccjqca2ksfgaskascm240r6b5725sb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.udemy.routeservices",
+            "certificate_hash": "dc35792db6e12987a60a929814b97357cdf0a894"
+          }
+        },
         {
           "client_id": "672622522497-n3a0m98g2gm9603f0q3c837ob2rdmq7i.apps.googleusercontent.com",
           "client_type": 3

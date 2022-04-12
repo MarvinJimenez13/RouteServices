@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.udemy.uberclone">
+    package="com.udemy.routeservices">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -12,26 +12,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CloneUber">
+        android:theme="@style/Theme.RouteServices">
         <activity
-            android:name="com.udemy.uberclone.Views.client.HistoryBookingClientActivity"
-            android:parentActivityName="com.udemy.uberclone.Views.client.MapClientActivity"
+            android:name="com.udemy.routeservices.Views.client.HistoryBookingClientActivity"
+            android:parentActivityName="com.udemy.routeservices.Views.client.MapClientActivity"
             android:exported="false" />
         <activity
-            android:name="com.udemy.uberclone.Views.client.CalificationDriverActivity"
+            android:name="com.udemy.routeservices.Views.client.CalificationDriverActivity"
             android:exported="false" />
         <activity
-            android:name="com.udemy.uberclone.Views.driver.CalificationClientActivity"
+            android:name="com.udemy.routeservices.Views.driver.CalificationClientActivity"
             android:exported="false" />
         <activity
-            android:name="com.udemy.uberclone.Views.driver.MapDriverBookingActivity"
+            android:name="com.udemy.routeservices.Views.driver.MapDriverBookingActivity"
             android:exported="false" />
         <activity
-            android:name="com.udemy.uberclone.Views.client.MapClientBookingActivity"
+            android:name="com.udemy.routeservices.Views.client.MapClientBookingActivity"
             android:exported="false" />
 
         <service
-            android:name="com.udemy.uberclone.WebServices.MyFirebaseMessagingClient"
+            android:name="com.udemy.routeservices.WebServices.MyFirebaseMessagingClient"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -39,43 +39,43 @@
         </service>
 
         <receiver
-            android:name="com.udemy.uberclone.Utils.receivers.AcceptReceiver"
+            android:name="com.udemy.routeservices.Utils.receivers.AcceptReceiver"
             android:enabled="true" />
         <receiver
-            android:name="com.udemy.uberclone.Utils.receivers.CancelReceiver"
+            android:name="com.udemy.routeservices.Utils.receivers.CancelReceiver"
             android:enabled="true" />
 
         <activity
-            android:name="com.udemy.uberclone.Views.client.RequestDriverActivity"
+            android:name="com.udemy.routeservices.Views.client.RequestDriverActivity"
             android:exported="false" />
         <activity
-            android:name="com.udemy.uberclone.Views.client.DetailRequestActivity"
+            android:name="com.udemy.routeservices.Views.client.DetailRequestActivity"
             android:exported="false"
-            android:parentActivityName="com.udemy.uberclone.Views.client.MapClientActivity" />
+            android:parentActivityName="com.udemy.routeservices.Views.client.MapClientActivity" />
         <activity
-            android:name="com.udemy.uberclone.Views.driver.MapDriverActivity"
+            android:name="com.udemy.routeservices.Views.driver.MapDriverActivity"
             android:exported="false" />
         <activity
-            android:name="com.udemy.uberclone.Views.client.MapClientActivity"
+            android:name="com.udemy.routeservices.Views.client.MapClientActivity"
             android:exported="false" />
         <activity
-            android:name="com.udemy.uberclone.Views.LoginActivity"
+            android:name="com.udemy.routeservices.Views.LoginActivity"
             android:exported="false"
-            android:parentActivityName="com.udemy.uberclone.Views.OptionAuthActivity" />
+            android:parentActivityName="com.udemy.routeservices.Views.OptionAuthActivity" />
         <activity
-            android:name="com.udemy.uberclone.Views.client.RegisterActivity"
+            android:name="com.udemy.routeservices.Views.client.RegisterActivity"
             android:exported="false"
-            android:parentActivityName="com.udemy.uberclone.Views.OptionAuthActivity" />
+            android:parentActivityName="com.udemy.routeservices.Views.OptionAuthActivity" />
         <activity
-            android:name="com.udemy.uberclone.Views.driver.RegisterDriverActivity"
+            android:name="com.udemy.routeservices.Views.driver.RegisterDriverActivity"
             android:exported="false"
-            android:parentActivityName="com.udemy.uberclone.Views.OptionAuthActivity" />
+            android:parentActivityName="com.udemy.routeservices.Views.OptionAuthActivity" />
         <activity
-            android:name="com.udemy.uberclone.Views.OptionAuthActivity"
+            android:name="com.udemy.routeservices.Views.OptionAuthActivity"
             android:exported="false"
-            android:parentActivityName="com.udemy.uberclone.Views.MainActivity" />
+            android:parentActivityName="com.udemy.routeservices.Views.MainActivity" />
         <activity
-            android:name="com.udemy.uberclone.Views.MainActivity"
+            android:name="com.udemy.routeservices.Views.MainActivity"
             android:theme="@style/SplashTheme"
             android:exported="true">
             <intent-filter>
