@@ -126,6 +126,7 @@ public class MapClientActivity extends AppCompatActivity implements OnMapReadyCa
         inicializarAutoComplete();
 
         //SharedPref para recuperar el viaje
+        /*
         String status = SharedPreferencesUber.getInstance(MapClientActivity.this).getStatusClientBooking();
         String idDriver = SharedPreferencesUber.getInstance(MapClientActivity.this).getIDDriverBookingClient();
         if(status.equals("RIDE") || status.equals("START"))
@@ -133,7 +134,10 @@ public class MapClientActivity extends AppCompatActivity implements OnMapReadyCa
         else {
             generateTokenNoti();
             mapClientPresenter.onCameraListener(this, map);
-        }
+        }*/
+
+        generateTokenNoti();
+        mapClientPresenter.onCameraListener(this, map);
 
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapClient);
         supportMapFragment.getMapAsync(this);

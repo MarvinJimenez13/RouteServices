@@ -23,6 +23,10 @@ public class ClientProvider {
         return mDatabase.child(client.getId()).setValue(map);
     }
 
+    public DatabaseReference emailExist(){
+        return mDatabase;
+    }
+
     public DatabaseReference getCLient(String idClient){
         return mDatabase.child(idClient);
     }

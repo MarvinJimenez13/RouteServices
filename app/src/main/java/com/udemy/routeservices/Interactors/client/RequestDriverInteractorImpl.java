@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
@@ -32,10 +33,13 @@ public class RequestDriverInteractorImpl implements RequestDriverInteractor {
 
     //Variable para poder finalizar el listener cuando acabemos.
     public static ValueEventListener valueEventListener;
+    private GeoQueryEventListener geoQueryEventListener;
     private RequestDriverPresenter requestDriverPresenter;
     private GeofireProvider geofireProvider;
     private TokenNotiProvider tokenNotiProvider;
     private static ClientBookingProvider clientBookingProvider;
+    private GeoQuery geoQuery;
+    public static boolean isCancel = false;
 
     public RequestDriverInteractorImpl(RequestDriverPresenter requestDriverPresenter){
         this.requestDriverPresenter = requestDriverPresenter;
@@ -46,8 +50,41 @@ public class RequestDriverInteractorImpl implements RequestDriverInteractor {
 
     @Override
     public void getClosestDrivers(LatLng originLatLng, double radius) {
-        geofireProvider.getActiveDrivers(originLatLng, radius).addGeoQueryEventListener(new GeoQueryEventListener() {
+        geoQuery = geofireProvider.getActiveDrivers(originLatLng, radius);
+        geoQueryEventListener = new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                if(!RequestDriverInteractorImpl.isCancel)
+                    requestDriverPresenter.driverFound(key, location);
+            }
 
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                //INGRESA CUANDO TERMINA LAS BUSQUEDAS DE CONDUCTORES EN UN RADIO DE 0.1 KM.
+                if(!RequestDriverInteractorImpl.isCancel)
+                    requestDriverPresenter.driverNotFound();
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        };
+
+        geoQuery.addGeoQueryEventListener(geoQueryEventListener);
+
+        /*
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             //ESTE METODO SE ACTIVA CUANDO ENCUENTRA UN REGISTRO, DEVUELVE EL KEY QUE ES EL ID DEL DRIVER
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
@@ -74,7 +111,7 @@ public class RequestDriverInteractorImpl implements RequestDriverInteractor {
             public void onGeoQueryError(DatabaseError error) {
 
             }
-        });
+        });*/
     }
 
     @Override
@@ -140,6 +177,12 @@ public class RequestDriverInteractorImpl implements RequestDriverInteractor {
     public void removeListener(AuthProvider authProvider) {
         if(valueEventListener != null)
             clientBookingProvider.getStatus(authProvider.getID()).removeEventListener(valueEventListener);
+        if(geofireProvider != null){
+            geoQuery.removeGeoQueryEventListener(geoQueryEventListener);
+            geoQuery.removeAllListeners();
+            geofireProvider = null;
+        }
+        RequestDriverInteractorImpl.isCancel = true;
     }
 
     private void buildNotification(String idDriver, String time, String km){

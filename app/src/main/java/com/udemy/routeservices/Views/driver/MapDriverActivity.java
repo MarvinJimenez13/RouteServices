@@ -151,6 +151,7 @@ public class MapDriverActivity extends AppCompatActivity implements OnMapReadyCa
         supportMapFragment.getMapAsync(this);
 
         //INICIAMOS EL SHARED DEL VIAJE CONSULTANDO EL RIDE
+        mapDriverPresenter.generateTokenNoti(authProvider);
 
         /*
         String status = SharedPreferencesUber.getInstance(MapDriverActivity.this).getStatusDriverBooking();

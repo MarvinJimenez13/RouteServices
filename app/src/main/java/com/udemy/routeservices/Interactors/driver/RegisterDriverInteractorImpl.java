@@ -2,11 +2,18 @@ package com.udemy.routeservices.Interactors.driver;
 
 import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.udemy.routeservices.Interfaces.driver.register.RegisterDriverInteractor;
 import com.udemy.routeservices.Interfaces.driver.register.RegisterDriverPresenter;
 import com.udemy.routeservices.Models.Driver;
+import com.udemy.routeservices.Models.DriverData;
 import com.udemy.routeservices.Utils.providers.AuthProvider;
 import com.udemy.routeservices.Utils.providers.DriverProvider;
 
@@ -27,45 +34,35 @@ public class RegisterDriverInteractorImpl implements RegisterDriverInteractor {
         if(!nombre.isEmpty() && !email.isEmpty() && !pass.isEmpty() && !telefono.isEmpty()){
             if(pass.length() >= 6){
                 registerDriverPresenter.showProgress();
-                authProvider.register(email.trim(), pass).addOnCompleteListener(listener ->{
-                    if(listener.isSuccessful()){
-                        String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        saveUser(id, nombre, email, marca, placa, telefono);
-                        //ENVIAR CODIGO SMS DE VERIFICACION
-                        /*
-                        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                            @Override
-                            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                                //La autenticacion fue exitosa.
-                                //EL USUARIO INSERTO EL CODIGO CORRECTAMENTE
-                                //EN CASO DE QUE NUESTRO MOVIL DETECTO AUTOMATICAMENTE EL CODIGO
-
-                                String code = phoneAuthCredential.getSmsCode();
-                                if(code != null){
-                                    registerDriverPresenter.showError("Codigo detectado:" + code);
+                //VALIDAR SI EXISTE ESTE CORREO EN EL NODO DE Drivers
+                driverProvider.emailExist().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean exist = false;
+                        for(DataSnapshot dataSnapshot: snapshot.getChildren()){
+                            DriverData driverData = dataSnapshot.getValue(DriverData.class);
+                            if(driverData.getEmail().equals(email))
+                                exist = true;
+                        }
+                        if(!exist){//REGISTRAMOS
+                            authProvider.register(email.trim(), pass).addOnCompleteListener(listener ->{
+                                if(listener.isSuccessful()){
                                     String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                     saveUser(id, nombre, email, marca, placa, telefono);
-                                }
-                            }
+                                } else
+                                    registerDriverPresenter.showError("Error en el REGISTRO.");
+                                registerDriverPresenter.hideProgress();
+                            });
+                        }else{
+                            registerDriverPresenter.hideProgress();
+                            registerDriverPresenter.showError("Correo ya registrado en Drivers.");
+                        }
+                    }
 
-                            @Override
-                            public void onVerificationFailed(@NonNull FirebaseException e) {
-                                //CUANDO EL ENVIO DEL SMS FALLA
-                                registerDriverPresenter.showError("Error: " + e.getMessage());
-                            }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                            //CODIGO DE VERIFICACION SE ENVIA A TRAVES DE MENSAJE DE TEXTO SMS
-                            @Override
-                            public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                                super.onCodeSent(s, forceResendingToken);
-                                registerDriverPresenter.showError("Codigo enviado");
-                            }
-                        };
-
-                        authProvider.sendCodeVerification(telefono, callbacks, activity);*/
-                    } else
-                        registerDriverPresenter.showError("Error en el REGISTRO.");
-                    registerDriverPresenter.hideProgress();
+                    }
                 });
             }else
                 registerDriverPresenter.showError("El pass debe tener 6 o mas carcateres.");

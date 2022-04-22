@@ -1,12 +1,16 @@
 package com.udemy.routeservices.Views.client;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.material.snackbar.Snackbar;
+import com.udemy.routeservices.Interactors.client.RequestDriverInteractorImpl;
 import com.udemy.routeservices.Interfaces.client.request_driver.RequestDriverPresenter;
 import com.udemy.routeservices.Interfaces.client.request_driver.RequestDriverView;
 import com.udemy.routeservices.Presenters.client.RequestDriverPresenterImpl;
@@ -18,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 public class RequestDriverActivity extends AppCompatActivity implements RequestDriverView {
@@ -32,6 +37,8 @@ public class RequestDriverActivity extends AppCompatActivity implements RequestD
 
     @BindView(R.id.tvBuscando)
     TextView tvBuscando;
+    @BindView(R.id.constraintLayout)
+    ConstraintLayout constraintLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +59,7 @@ public class RequestDriverActivity extends AppCompatActivity implements RequestD
 
         requestDriverPresenter = new RequestDriverPresenterImpl(this);
         requestDriverPresenter.getClosestDrivers(originLatLng, RADIUS);
+        RequestDriverInteractorImpl.isCancel = false;
     }
 
     @Override
@@ -84,6 +92,13 @@ public class RequestDriverActivity extends AppCompatActivity implements RequestD
             }else
                 requestDriverPresenter.getClosestDrivers(originLatLng, RADIUS);
         }
+    }
+
+    @OnClick(R.id.btnCancelar)
+    public void onClickCancelar(){
+        finish();
+        //Quitar el escucha al final, ya que se queda escuchando y puede duplicarse si no lo finalizamos.
+        requestDriverPresenter.removeListener(authProvider);
     }
 
     @Override

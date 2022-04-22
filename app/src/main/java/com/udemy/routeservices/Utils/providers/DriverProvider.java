@@ -17,6 +17,10 @@ public class DriverProvider {
         return mDatabase.child(driver.getId()).setValue(driver);
     }
 
+    public DatabaseReference emailExist(){
+        return mDatabase;
+    }
+
     public DatabaseReference getDriver(String idDriver){
         return mDatabase.child(idDriver);
     }
