@@ -23,12 +23,13 @@
         android:id="@+id/btnCuenta"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        app:cornerRadius="20dp"
-        android:text="@string/tengo_cuenta"
         android:layout_marginHorizontal="15dp"
+        android:text="@string/tengo_cuenta"
+        app:cornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRegistrarme"

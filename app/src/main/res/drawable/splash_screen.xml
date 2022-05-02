@@ -10,7 +10,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/iconsplash"/>
+            android:src="@drawable/ic_launcher"/>
     </item>
 
 </layer-list>

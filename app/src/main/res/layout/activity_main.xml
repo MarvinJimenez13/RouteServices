@@ -16,6 +16,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:layout_marginHorizontal="30dp"
             android:src="@drawable/cloneuber"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="100dp"/>
@@ -30,29 +31,31 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="bottom"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_margin="10dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConductor"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_weight="1"
+                android:layout_marginTop="20dp"
                 android:layout_marginRight="2dp"
                 app:cornerRadius="20dp"
+                android:layout_gravity="center"
                 android:text="SOY CONDUCTOR"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnCliente"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/black"
-                app:cornerRadius="20dp"
-                android:layout_marginLeft="2dp"
-                android:text="SOY CLIENTE"/>
+                android:text="SOY CLIENTE"
+                app:cornerRadius="20dp" />
 
         </LinearLayout>
 
